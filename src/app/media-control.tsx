@@ -2,22 +2,24 @@
 import React from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
+import { useBackendSettings } from "./backend-context";
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 function MediaControls() {
+    const { settings } = useBackendSettings();
     // 使用SWR获取媒体状态
-    const { data, error } = useSWR(`${process.env.backendApi}/media`, fetcher);
+    const { data, error } = useSWR(`${settings.apiURL}/media`, fetcher);
 
     // 检查是否在加载或发生错误
-    if (error) return <div>加载失败{process.env.backendApi}</div>;
+    if (error) return <div>加载失败{settings.apiURL}</div>;
     if (!data) return <div>加载中...</div>;
     console.log(error)
 
     // 发送媒体控制请求
     const sendMediaRequest = async (path: string) => {
         try {
-            await axios.post(`${process.env.backendApi}${path}`);
+            await axios.post(`${settings.apiURL}${path}`);
             // 这里不需要手动更新mediaStatus状态，SWR会定期重新获取数据
         } catch (error) {
             console.error('Error sending media control request:', error);

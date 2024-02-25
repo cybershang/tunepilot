@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import useSWR from "swr";
 import axios from 'axios';
 
+import { useBackendSettings } from "./backend-context";
+
+
 interface VolumeData {
     volume: number;
 }
 
-async function setVolume(volume: number) {
+async function setVolume(apiURL:string,volume: number) {
     try {
-        const response = await axios.post(`${process.env.backendApi}/volume`, {
+        const response = await axios.post(`${apiURL}/volume`, {
             volume: volume,
         });
         console.log(response.data);
@@ -22,7 +25,8 @@ async function setVolume(volume: number) {
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export default function VolumeSlider() {
-    const { data, error } = useSWR<VolumeData>(`${process.env.backendApi}/volume`, fetcher);
+    const { settings } = useBackendSettings();
+    const { data, error } = useSWR<VolumeData>(`${settings.apiURL}/volume`, fetcher);
     const [volume, setLocalVolume] = useState(0);
 
     useEffect(() => {
@@ -37,7 +41,7 @@ export default function VolumeSlider() {
     const handleSliderChange = (e: { target: { value: any; }; }) => {
         const newVolume = e.target.value;
         setLocalVolume(newVolume);
-        setVolume(newVolume).catch(console.error); // 使用axios发送POST请求更新音量
+        setVolume(settings.apiURL,newVolume).catch(console.error); // 使用axios发送POST请求更新音量
     };
 
     return (
