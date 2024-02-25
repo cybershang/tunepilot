@@ -3,7 +3,7 @@ import React from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 
-const fetcher = url => axios.get(url).then(res => res.data);
+const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 function MediaControls() {
     // 使用SWR获取媒体状态
@@ -15,7 +15,7 @@ function MediaControls() {
     console.log(error)
 
     // 发送媒体控制请求
-    const sendMediaRequest = async (path) => {
+    const sendMediaRequest = async (path: string) => {
         try {
             await axios.post(`${process.env.backendApi}${path}`);
             // 这里不需要手动更新mediaStatus状态，SWR会定期重新获取数据

@@ -19,7 +19,7 @@ async function setVolume(volume: number) {
     }
 }
 
-const fetcher = url => axios.get(url).then(res => res.data);
+const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export default function VolumeSlider() {
     const { data, error } = useSWR<VolumeData>(`${process.env.backendApi}/volume`, fetcher);
@@ -34,7 +34,7 @@ export default function VolumeSlider() {
     if (error) return <div>failed to load</div>;
     if (!data) return <div>loading...</div>;
 
-    const handleSliderChange = (e) => {
+    const handleSliderChange = (e: { target: { value: any; }; }) => {
         const newVolume = e.target.value;
         setLocalVolume(newVolume);
         setVolume(newVolume).catch(console.error); // 使用axios发送POST请求更新音量
